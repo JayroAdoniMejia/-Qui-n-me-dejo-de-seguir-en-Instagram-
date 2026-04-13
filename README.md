@@ -54,12 +54,13 @@ python --version
 
    * 👉 "Tu información y permisos"
    * 👉 "Descargar tu información(Solo selecciona la opcion Seguidores y seguidos)"
-   * 👉 "Te caera un correo donde instagram te confirma la descarga"
+  
 4. Elige:
 
    * Formato: **JSON**
    * Intervalo: **Cualquier fecha**
 5. Descarga el archivo `.zip`
+ * 👉 "Te caera un correo donde instagram te confirma la descarga"
 6. Extrae los archivos
 7. Veras una carpeta llamada "connections" y adentro otra carpeta llamada "followers_and_following"
 
