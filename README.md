@@ -54,6 +54,7 @@ python --version
 
    * 👉 "Tu información y permisos"
    * 👉 "Descargar tu información(Solo selecciona la opcion Seguidores y seguidos)"
+   * 👉 "Te caera un correo donde instagram te confirma la descarga"
 4. Elige:
 
    * Formato: **JSON**
