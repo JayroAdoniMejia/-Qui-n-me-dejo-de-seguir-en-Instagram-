@@ -1,7 +1,17 @@
 import json
 import os
+from datetime import datetime
 
-# ========= FUNCIONES MODIFICADAS =========
+# ========= CONFIGURACIÓN DE COLORES (ANSI - SIN LIBRERÍAS) =========
+CYAN = "\033[96m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+RED = "\033[91m"
+MAGENTA = "\033[95m"
+BOLD = "\033[1m"
+RESET = "\033[0m"
+
+# ========= FUNCIONES =========
 
 def extraer_datos(data, es_following=False):
     """
@@ -9,53 +19,75 @@ def extraer_datos(data, es_following=False):
     Soluciona el error de redirección de los enlaces /_u/.
     """
     usuarios_dict = {}
-    
-    # Navegar por la estructura dependiendo de si es followers o following
     fuente = data.get("relationships_following", []) if es_following else data
     
     for user in fuente:
-        # En following, a veces el nombre está en 'title'
         username_fallback = user.get("title")
-        
         for item in user.get("string_list_data", []):
             username = item.get("value") or username_fallback
             link_original = item.get("href", "")
             
-            # --- LIMPIEZA DE ENLACE (SOLUCIÓN AL ERROR DE INSTAGRAM) ---
             if "/_u/" in link_original:
-                # Extraer el nombre de usuario después del /_u/ para crear link limpio
                 user_clean = link_original.split("/_u/")[-1]
                 link_final = f"https://www.instagram.com/{user_clean}/"
             elif link_original:
-                # Asegurar que los links normales terminen en /
                 link_final = link_original if link_original.endswith("/") else f"{link_original}/"
             else:
                 link_final = "Enlace no disponible"
-            
-            # Si aún no tenemos username, intentamos sacarlo del link final
-            if not username and link_final != "Enlace no disponible":
-                username = link_final.split("/")[-2]
-            
+
             if username:
                 usuarios_dict[username] = link_final
-                
     return usuarios_dict
 
-def guardar_txt(nombre, lista_claves, diccionario_fuente):
-    """
-    Guarda en el TXT el formato: usuario - enlace
-    """
-    with open(nombre, "w", encoding="utf-8") as f:
-        for user in sorted(lista_claves):
-            enlace = diccionario_fuente.get(user, "No disponible")
-            f.write(f"{user} - {enlace}\n")
+def generar_reporte_html(nombre_archivo, lista_claves, diccionario_fuente, titulo_reporte, color_base):
+    """Genera una página web atractiva con estándares modernos de seguridad y viewport"""
+    fecha_actual = datetime.now().strftime('%d/%m/%Y %H:%M')
+    
+    filas_html = ""
+    for u in sorted(lista_claves):
+        link = diccionario_fuente.get(u, "#")
+        filas_html += f'<a href="{link}" target="_blank" rel="noopener" class="user-link">@{u}</a>'
 
-def mostrar_lista(titulo, lista):
-    print(f"\n{titulo} ({len(lista)}):\n" + "-"*40)
-    for user in sorted(lista):
-        print(user)
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{titulo_reporte}</title>
+        <style>
+            body {{ font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }}
+            .container {{ background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }}
+            h1 {{ color: {color_base}; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-top: 0; }}
+            .stats {{ color: #65676b; font-size: 0.9em; margin-bottom: 15px; }}
+            .instruction {{ color: {color_base}; font-weight: bold; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; }}
+            .user-link {{ display: block; padding: 12px; margin: 8px 0; text-decoration: none; color: #1c1e21; background: #f8f9fa; border-radius: 8px; transition: all 0.2s; font-weight: 500; overflow-wrap: break-word; }}
+            .user-link:hover {{ background: {color_base}; color: white; transform: translateX(10px); }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>{titulo_reporte}</h1>
+            <p class="stats">📅 {fecha_actual} | 👥 Total: {len(lista_claves)}</p>
+            <span class="instruction">👇 Click para ir a su perfil:</span>
+            {filas_html}
+        </div>
+    </body>
+    </html>
+    """
+    with open(nombre_archivo, "w", encoding="utf-8") as f:
+        f.write(html_content)
 
 # ========= CARGA DE DATOS =========
+
+os.system('cls' if os.name == 'nt' else 'clear')
+logo = f"""{MAGENTA}{BOLD}
+  ___ _  _ ___ _____ _    ___ ___   _   __  __ 
+ |_ _| \| / __|_   _/_\  / __| _ \ /_\ |  \/  |
+  | || .` \__ \ | |/ _ \ \__ \   // _ \| |\/| |
+ |___|_|\_|___/ |_/_/ \_\|___/_|_/_/ \_\_|  |_|
+{RESET}"""
+print(logo)
 
 try:
     with open("followers_1.json", "r", encoding="utf-8") as f:
@@ -63,21 +95,18 @@ try:
     with open("following.json", "r", encoding="utf-8") as f:
         following_data = json.load(f)
 except FileNotFoundError:
-    print("❌ No se encontraron los archivos JSON")
-    print("Asegúrate de que 'followers_1.json' y 'following.json' estén en la misma carpeta.")
+    print(f"{RED}❌ Error: No se encontraron los archivos JSON en la carpeta.{RESET}")
     input("Presiona ENTER para salir...")
     exit()
 
-# Obtenemos diccionarios completos {usuario: link_limpio}
 dict_followers = extraer_datos(followers_data)
 dict_following = extraer_datos(following_data, es_following=True)
+diccionario_maestro = {**dict_followers, **dict_following}
 
-# Creamos sets para las operaciones matemáticas
 set_followers = set(dict_followers.keys())
 set_following = set(dict_following.keys())
 
 # ========= CÁLCULOS =========
-
 no_te_siguen = set_following - set_followers
 no_sigues = set_followers - set_following
 mutuos = set_followers & set_following
@@ -85,42 +114,37 @@ mutuos = set_followers & set_following
 # ========= MENÚ =========
 
 while True:
-    print("\n📊 --- ANALIZADOR DE INSTAGRAM (LINKS LIMPIOS) ---")
-    print("1. Ver resumen")
-    print("2. Ver quién NO te sigue")
-    print("3. Ver a quién NO sigues")
-    print("4. Ver seguidores mutuos")
-    print("5. Guardar resultados con LINKS CORREGIDOS en .txt")
-    print("6. Salir")
+    print(f"\n{CYAN}{BOLD}📊 --- ANALIZADOR DE INSTAGRAM PRO ---{RESET}")
+    print(f"1. {BOLD}Ver resumen{RESET}")
+    print(f"2. {RED}Ver quién NO te sigue{RESET}")
+    print(f"3. {YELLOW}Ver a quién NO sigues{RESET}")
+    print(f"4. {GREEN}Ver seguidores mutuos{RESET}")
+    print(f"5. {BOLD}Exportar Reportes HTML(Sugerido){RESET}")
+    print(f"6. Salir")
 
-    opcion = input("\nElige una opción: ")
+    opcion = input(f"\n{BOLD}Elige una opción: {RESET}")
 
     if opcion == "1":
-        print(f"\n👥 Seguidores: {len(set_followers)}")
-        print(f"➡️ Siguiendo: {len(set_following)}")
-        print(f"❌ No te siguen: {len(no_te_siguen)}")
-        print(f"🤔 No sigues: {len(no_sigues)}")
-        print(f"✅ Mutuos: {len(mutuos)}")
+        print(f"\n{BOLD}📈 RESUMEN DE CUENTA{RESET}")
+        print("-" * 25)
+        print(f"👥 Seguidores: {len(set_followers)}")
+        print(f"➡️ Siguiendo:  {len(set_following)}")
+        print(f"❌ {RED}No te siguen: {len(no_te_siguen)}{RESET}")
+        print(f"🤔 {YELLOW}No sigues:    {len(no_sigues)}{RESET}")
+        print(f"✅ {GREEN}Mutuos:       {len(mutuos)}{RESET}")
 
     elif opcion == "2":
-        mostrar_lista("❌ No te siguen", no_te_siguen)
-
-    elif opcion == "3":
-        mostrar_lista("🤔 Tú no sigues", no_sigues)
-
-    elif opcion == "4":
-        mostrar_lista("✅ Seguidores mutuos", mutuos)
+        print(f"\n{RED}{BOLD}❌ USUARIOS QUE NO TE SIGUEN ({len(no_te_siguen)}):{RESET}")
+        for u in sorted(no_te_siguen): print(f"  • @{u}")
 
     elif opcion == "5":
-        # Usamos dict_following para los que no te siguen
-        guardar_txt("no_te_siguen.txt", no_te_siguen, dict_following)
-        # Usamos dict_followers para los que tú no sigues
-        guardar_txt("no_sigues.txt", no_sigues, dict_followers)
-        guardar_txt("mutuos.txt", mutuos, dict_following)
-        print("\n💾 Archivos guardados. Los links ahora deberían funcionar correctamente.")
+        print(f"\n{CYAN}Generando reportes HTML profesionales...{RESET}")
+        generar_reporte_html("no_te_siguen.html", no_te_siguen, diccionario_maestro, "No te siguen", "#e4405f")
+        generar_reporte_html("mutuos.html", mutuos, diccionario_maestro, "Seguidores Mutuos", "#3897f0")
+        print(f"{GREEN}✅ ¡Éxito! Reportes HTML listos. (TXT desactivado){RESET}")
 
     elif opcion == "6":
-        print("\n👋 ¡Hasta luego!")
+        print(f"\n{MAGENTA}👋 ¡Hasta luego!{RESET}")
         break
     else:
-        print("\n❌ Opción inválida")
+        print(f"{RED}❌ Opción inválida{RESET}")
