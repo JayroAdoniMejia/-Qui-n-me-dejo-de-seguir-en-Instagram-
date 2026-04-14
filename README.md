@@ -6,17 +6,16 @@ Una herramienta profesional en **Python** que te permite analizar tu cuenta de I
 - 🤔 **A quién NO sigues tú**
 - ✅ **Seguidores mutuos**
 
-Todo esto de forma **100% segura**, procesando tus datos localmente sin necesidad de ingresar tu usuario o contraseña.
+Todo esto de forma **100% segura**, procesando tus datos localmente sin necesidad de ingresar tu usuario o contraseña, el programa unicamente analiza los archivos JSON de tus seguidores y seguidos(por lo que es totalmente seguro).
 
 ---
 
 ## 🚀 Características
 
-- 🔒 **Privacidad Total** → No requiere login ni acceso a APIs externas.
+- 🔒 **Privacidad Total** → No requiere login ni inicio de sesion ni acceso a APIs externas.
+- ⚡ **Sin Frameworks** → Código puro de Python; no necesitas instalar librerías externas.
 - 🎨 **Interfaz Colorida** → Menú visual en terminal con códigos de color ANSI.
 - 🌐 **Reportes HTML Pro** → Genera páginas web locales con diseño moderno y enlaces directos a perfiles.
-- 🔗 **Links Corregidos** → Soluciona el error de redirección `/_u/` de Instagram para que los links funcionen al primer clic.
-- ⚡ **Sin Frameworks** → Código puro de Python; no necesitas instalar librerías externas.
 - 📱 **Diseño Responsivo** → Reportes compatibles con dispositivos móviles (Meta Viewport).
 
 ---
