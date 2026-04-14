@@ -119,7 +119,7 @@ while True:
     print(f"2. {RED}Ver quién NO te sigue{RESET}")
     print(f"3. {YELLOW}Ver a quién NO sigues{RESET}")
     print(f"4. {GREEN}Ver seguidores mutuos{RESET}")
-    print(f"5. {BOLD}Exportar Reportes HTML(Sugerido){RESET}")
+    print(f"5. {BOLD}Exportar Reportes HTML(recomendado){RESET}")
     print(f"6. Salir")
 
     opcion = input(f"\n{BOLD}Elige una opción: {RESET}")

@@ -1,34 +1,35 @@
 # 📊 Analizador de Seguidores de Instagram (Unfollowers Tool)
 
-Una herramienta en **Python** que te permite analizar tu cuenta de Instagram y descubrir:
+Una herramienta profesional en **Python** que te permite analizar tu cuenta de Instagram y descubrir:
 
-* ❌ Quién NO te sigue de vuelta
-* 🤔 A quién NO sigues tú
-* ✅ Seguidores mutuos
+- ❌ **Quién NO te sigue de vuelta**
+- 🤔 **A quién NO sigues tú**
+- ✅ **Seguidores mutuos**
 
-Todo esto de forma **segura**, sin necesidad de ingresar tu usuario o contraseña.
+Todo esto de forma **100% segura**, procesando tus datos localmente sin necesidad de ingresar tu usuario o contraseña.
 
 ---
 
 ## 🚀 Características
 
-* 🔒 **100% seguro** → No requiere login
-* 🧠 Código simple y fácil de modificar y sin tener que instalar frameworks
-* 📂 Funciona con datos oficiales exportados de Instagram
-* 📊 Muestra estadísticas claras
-* 📋 Listas ordenadas alfabéticamente
-* 💾 Exporta resultados a archivos `.txt`
-
+- 🔒 **Privacidad Total** → No requiere login ni acceso a APIs externas.
+- 🎨 **Interfaz Colorida** → Menú visual en terminal con códigos de color ANSI.
+- 🌐 **Reportes HTML Pro** → Genera páginas web locales con diseño moderno y enlaces directos a perfiles.
+- 🔗 **Links Corregidos** → Soluciona el error de redirección `/_u/` de Instagram para que los links funcionen al primer clic.
+- ⚡ **Sin Frameworks** → Código puro de Python; no necesitas instalar librerías externas.
+- 📱 **Diseño Responsivo** → Reportes compatibles con dispositivos móviles (Meta Viewport).
 
 ---
 
 ## 📁 Estructura del Proyecto
 
-```
+```text
 📦 proyecto/
  ┣ 📄 unfollowers_pro.py
  ┣ 📄 followers_1.json
  ┣ 📄 following.json
+ ┣ 📄 no_te_siguen.html  <-- Generado por el script
+ ┣ 📄 mutuos.html        <-- Generado por el script
  ┗ 📄 README.md
 ```
 
@@ -36,7 +37,7 @@ Todo esto de forma **segura**, sin necesidad de ingresar tu usuario o contraseñ
 
 ## ⚙️ Requisitos
 
-* Python 3.x
+- Python 3.x
 
 Puedes verificar tu versión con:
 
@@ -48,32 +49,24 @@ python --version
 
 ## 📥 Cómo obtener tus datos de Instagram
 
-1. Ve a Configuración de Instagram
-2. Entra en **Centro de cuentas**
-3. Selecciona:
+1. Ve a la **Configuración** de tu Instagram.
+2. Entra en **Centro de cuentas → Tu información y permisos**.
+3. Selecciona **Descargar tu información**.
+4. Elige **Descarga parcial** y marca únicamente la opción **Seguidores y seguidos**.
+5. Configuración del archivo:
+   - Formato: **JSON** *(Obligatorio)*
+   - Calidad: Media/Alta
+   - Intervalo: Desde el principio *(cualquier fecha)*
+6. Descarga y extrae el archivo `.zip` que Instagram te enviará por correo.
 
-   * 👉 "Tu información y permisos"
-   * 👉 "Descargar tu información(Solo selecciona la opcion Seguidores y seguidos)"
-  
-4. Elige:
+### 📌 Archivos necesarios
 
-   * Formato: **JSON**
-   * Intervalo: **Cualquier fecha**
-5. Descarga el archivo `.zip`
- * 👉 "Te caera un correo donde instagram te confirma la descarga"
-6. Extrae los archivos
-7. Veras una carpeta llamada "connections" y adentro otra carpeta llamada "followers_and_following"
+Dentro de la carpeta extraída, busca en `connections/followers_and_following/`:
 
----
+- `followers_1.json`
+- `following.json`
 
-## 📌 Archivos necesarios
-
-Dentro del archivo descargado busca:
-
-* `followers_1.json`
-* `following.json`
-
-Colócalos en la misma carpeta unfollowers_pro que debes crear para el script "unfollowers_pro.py".
+Cópialos a la misma carpeta donde tengas tu script `unfollowers_pro.py`.
 
 ---
 
@@ -85,90 +78,43 @@ Ejecuta el programa en la terminal con:
 python unfollowers_pro.py
 ```
 
----
+### 🖥️ Menú del programa
 
-## 🖥️ Menú del programa
-
-Al ejecutarlo verás:
+Al ejecutarlo verás una interfaz interactiva:
 
 ```
 1. Ver resumen
 2. Ver quién NO te sigue
 3. Ver a quién NO sigues
 4. Ver seguidores mutuos
-5. Guardar resultados en archivos .txt
+5. Exportar Reportes HTML(recomendado)
 6. Salir
 ```
 
 ---
 
-## 📊 Ejemplo de salida
+## 📊 Reportes Visuales
 
-```
-📊 RESUMEN
-------------------------------
-👥 Seguidores: 1185
-➡️ Siguiendo: 650
-❌ No te siguen: 320
-🤔 No sigues: 855
-✅ Mutuos: 330
-```
+Al seleccionar la opción **5**, el programa genera archivos `.html` con:
 
----
-
-## 💾 Exportación
-
-El programa genera automáticamente:
-
-* `no_te_siguen.txt`
-* `no_sigues.txt`
-* `mutuos.txt`
+- **Seguridad Mejorada:** Implementación de `rel="noopener"` para navegación segura.
+- **Instrucciones:** Guía visual *"👇 Click para ir a su perfil"*.
+- **Estilo:** Diseño tipo tarjeta (Card Design) con colores oficiales y efectos de hover.
 
 ---
 
 ## 🧠 Cómo funciona
 
-El script:
-
-1. Lee los archivos JSON exportados
-2. Extrae los nombres de usuario
-3. Compara listas usando estructuras tipo `set`
-4. Calcula diferencias e intersecciones
+1. **Limpieza Dinámica:** El script procesa el JSON y reconstruye las URLs de Instagram eliminando las trabas de redirección del formato original.
+2. **Lógica de Conjuntos:** Utiliza estructuras de `set()` para calcular diferencias simétricas en milisegundos.
+3. **Generación de Plantillas:** Crea un documento HTML desde cero inyectando los datos procesados y estilos CSS embebidos para asegurar la portabilidad y cumplimiento de estándares web (Viewport).
 
 ---
 
 ## ⚠️ Importante
 
-* No uses aplicaciones externas que pidan tu contraseña
-* Este método es seguro porque usa tus propios datos exportados
-* Instagram cambia frecuentemente el formato de sus archivos, este script está adaptado para ello
-
----
-
-## 🛠️ Posibles mejoras
-
-* Interfaz gráfica (GUI)
-* Filtros avanzados
-* Integración con bases de datos
-* Estadísticas más detalladas
-
----
-
-## 🤝 Contribuciones
-
-¡Las contribuciones son bienvenidas!
-
-Puedes hacer:
-
-* Fork del proyecto
-* Crear una rama
-* Enviar un Pull Request
-
----
-
-## 📜 Licencia
-
-Este proyecto es de uso libre para fines educativos y personales.
+- **Seguridad:** Nunca uses aplicaciones que te pidan tu contraseña de Instagram. Este script es seguro porque tú controlas tus datos.
+- **Privacidad:** Los reportes generados son archivos locales en tu PC; nadie más tiene acceso a ellos.
 
 ---
 
@@ -180,6 +126,4 @@ Desarrollado por **Jayro Adoni Mejía**
 
 ## ⭐ Apoya el proyecto
 
-Si te fue útil, considera darle una ⭐ en GitHub 
-
----
+Si te fue útil esta herramienta para gestionar tu comunidad, considera darle una ⭐ en GitHub.
