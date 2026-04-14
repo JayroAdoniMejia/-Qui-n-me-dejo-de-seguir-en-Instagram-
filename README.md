@@ -96,9 +96,11 @@ Al ejecutarlo verás una interfaz interactiva:
 
 Al seleccionar la opción **5**, el programa genera archivos `.html` con:
 
-- **Seguridad Mejorada:** Implementación de `rel="noopener"` para navegación segura.
+
 - **Instrucciones:** Guía visual *"👇 Click para ir a su perfil"*.
-- **Estilo:** Diseño tipo tarjeta (Card Design) con colores oficiales y efectos de hover.
+- **Instrucciones:** Guía visual *"👇 Lista de seguidores que no te siguen"*.
+- **Instrucciones:** Guía visual *"te permite ir al perfil de quien no te sigue si dejarlo de seguir"*.
+
 
 ---
 
